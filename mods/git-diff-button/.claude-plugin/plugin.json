@@ -1,0 +1,6 @@
+{
+  "name": "git-diff-button",
+  "version": "0.1.0",
+  "description": "入力欄上の右端のボタンで、git diff を処理中でも開くペイン",
+  "types": "./types/index.d.ts"
+}
