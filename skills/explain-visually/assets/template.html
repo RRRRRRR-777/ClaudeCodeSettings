@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+/* ==========================================================
+   基本設定: 配色・タイポグラフィ・ページ幅
+   本文幅は最大960px。スマホ幅でもページ全体は横スクロールさせない。
+   幅の広い表・図は、各パーツ自身のコンテナの中でスクロールさせる。
+   ========================================================== */
+:root {
+  --fg: #1f2933;
+  --muted: #5f6c7b;
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --line: #d9dee5;
+  --accent: #2563eb;
+  --accent-soft: #e8f0fe;
+  --warn: #b45309;
+  --warn-soft: #fef3c7;
+  --hi: #fff3bf;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+main { max-width: 960px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 1.7rem; line-height: 1.4; margin: 0 0 20px; }
+h2 { font-size: 1.3rem; line-height: 1.5; margin: 40px 0 12px; display: flex; align-items: baseline; gap: 12px; }
+h3 { font-size: 1.1rem; margin: 24px 0 8px; }
+p { margin: 0 0 12px; }
+ul, ol { margin: 0 0 12px; padding-left: 1.5em; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em;
+  background: #eef1f5; padding: 1px 5px; border-radius: 4px; }
+
+/* ==========================================================
+   .tldr  一言でいうと
+   使う場面: ページ冒頭に1つだけ。対象が何をするものかを1〜2文で書く。
+   マークアップ: <div class="tldr"><p>本文</p></div>
+   ========================================================== */
+.tldr { background: var(--accent-soft); border-left: 6px solid var(--accent);
+  border-radius: 8px; padding: 14px 18px; margin: 0 0 20px; font-size: 1.05rem; font-weight: 600; }
+.tldr::before { content: "一言でいうと"; display: block; font-size: 0.8rem; color: var(--accent); font-weight: 700; }
+.tldr p:last-child { margin-bottom: 0; }
+
+/* ==========================================================
+   .headline  読む前に知っておくこと
+   使う場面: .tldr の直後。前提を取り違えると全体が読めなくなる事実がある場合だけ置く。
+   マークアップ: <div class="headline"><ul><li>事実</li></ul></div>
+   ========================================================== */
+.headline { background: var(--warn-soft); border-left: 6px solid var(--warn);
+  border-radius: 8px; padding: 14px 18px; margin: 0 0 28px; }
+.headline::before { content: "読む前に知っておくこと"; display: block; font-size: 0.8rem; color: var(--warn); font-weight: 700; }
+.headline ul, .headline p:last-child { margin-bottom: 0; }
+
+/* ==========================================================
+   .section-num  節番号 (01, 02 ...)
+   使う場面: h2 の中の先頭に置く。「01の3番目」のように節を指定できるようにする。
+   マークアップ: <h2><span class="section-num">01</span>見出し</h2>
+   ========================================================== */
+.section-num { font-family: ui-monospace, Menlo, monospace; font-size: 0.9rem; color: #fff;
+  background: var(--accent); border-radius: 6px; padding: 0 8px; flex: none; }
+
+/* ==========================================================
+   .flow + .step  CSSだけで描く直線的な流れ (左から右、狭い画面では折り返す)
+   使う場面: 分岐のない処理の流れ。分岐があれば Mermaid の flowchart を使う。
+   マークアップ:
+     <div class="flow">
+       <div class="step"><b>見出し</b>補足</div>
+       <div class="step">...</div>
+     </div>
+   矢印は .step の間に自動で付く。折り返したときも矢印は右向きのまま。
+   ========================================================== */
+.flow { display: flex; flex-wrap: wrap; gap: 12px 36px; margin: 12px 0 8px; }
+.flow .step { position: relative; flex: 1 1 160px; min-width: 140px; background: var(--panel);
+  border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: 8px;
+  padding: 10px 12px; font-size: 0.92rem; line-height: 1.6; }
+.flow .step b { display: block; margin-bottom: 2px; }
+.flow .step + .step::before { content: "\2192"; position: absolute; left: -29px; top: 50%;
+  transform: translateY(-50%); width: 24px; text-align: center; color: var(--accent);
+  font-size: 1.4rem; font-weight: 700; }
+
+/* ==========================================================
+   .layers  積み重ねた層の図
+   使う場面: 階層・レイヤ構造 (上位が下位に依存する構成など)。上から順に並べる。
+   マークアップ:
+     <div class="layers">
+       <div class="layer"><b>層の名前</b>説明</div>
+       <div class="layer">...</div>
+     </div>
+   ========================================================== */
+.layers { display: flex; flex-direction: column; gap: 6px; margin: 12px 0 8px; }
+.layers .layer { background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--accent);
+  border-radius: 6px; padding: 10px 14px; font-size: 0.95rem; line-height: 1.6; }
+.layers .layer:nth-child(2) { margin-left: 16px; }
+.layers .layer:nth-child(3) { margin-left: 32px; }
+.layers .layer:nth-child(4) { margin-left: 48px; }
+.layers .layer:nth-child(n+5) { margin-left: 64px; }
+.layers .layer b { display: block; }
+
+/* ==========================================================
+   .card  設計判断などのカード / .id  識別子バッジ
+   使う場面: 設計判断 (D-)、未確認事項 (U-)、気になった点 (Q-) を1件ずつ書く。
+   識別子は省略しない (ユーザーが「D-03を詳しく」と指定するため)。
+   マークアップ:
+     <div class="card">
+       <h3><span class="id">D-01</span>判断の題</h3>
+       <p>何が決まっているか。なぜそうなっているか。</p>
+     </div>
+   ========================================================== */
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 18px; margin: 0 0 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.card h3 { margin: 0 0 6px; display: flex; align-items: baseline; gap: 10px; font-size: 1.05rem; }
+.card p:last-child, .card ul:last-child { margin-bottom: 0; }
+.id { font-family: ui-monospace, Menlo, monospace; font-size: 0.82rem; font-weight: 700; flex: none;
+  color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 0 10px; }
+
+/* ==========================================================
+   .figcap  図の下の説明文
+   使う場面: 図 (.flow / .layers / .mermaid / 表) の直後。Mermaid のラベルに書けない補足はここに書く。
+   マークアップ: <p class="figcap">図の説明</p>
+   ========================================================== */
+.figcap { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin: 4px 0 20px; }
+
+/* ==========================================================
+   .ask  末尾の深掘り案内
+   使う場面: ページの最後に1つ。識別子を指定すると掘り下げたページを作れることを伝える。
+   マークアップ: <div class="ask"><p>案内文 (例: D-01 のように識別子を指定してください)</p></div>
+   ========================================================== */
+.ask { margin-top: 40px; background: var(--panel); border: 2px dashed var(--accent);
+  border-radius: 10px; padding: 14px 18px; }
+.ask p:last-child { margin-bottom: 0; }
+
+/* ==========================================================
+   pre.code  行番号付きコード / .hi  強調行
+   使う場面: 実際のコードを見せる。1行を <span class="l"> で囲み、強調する行は class="l hi"。
+   行の間に改行や空白を入れない (pre の空白保持で空行が増えるため、.l 側で保持している)。
+   コード中の < & は &lt; &amp; にエスケープする。長い行は pre 内で横スクロールする。
+   マークアップ:
+     <pre class="code"><span class="l">const a = 1;</span><span class="l hi">const b = 2;</span></pre>
+   ========================================================== */
+pre.code { margin: 12px 0 8px; padding: 12px 0; background: #1e2430; color: #e6e9ef; border-radius: 8px;
+  overflow-x: auto; white-space: normal; counter-reset: ln; font-size: 0.85rem; line-height: 1.6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+pre.code .l { display: block; white-space: pre; padding: 0 16px 0 0; counter-increment: ln; min-width: max-content; }
+pre.code .l::before { content: counter(ln); display: inline-block; width: 3.2em; margin-right: 14px;
+  padding-right: 10px; text-align: right; color: #7b8494; border-right: 1px solid #3a4252; }
+pre.code .l.hi { background: rgba(250, 204, 21, .22); box-shadow: inset 3px 0 0 #facc15; }
+pre.code .l.hi::before { color: #facc15; }
+
+/* ==========================================================
+   表 (table)
+   使う場面: 対応関係・比較・具体例の行。素の <table> をそのまま書けば装飾される。
+   幅が足りないときは <div class="table-wrap"> で囲むと、表だけが横スクロールする。
+   マークアップ: <div class="table-wrap"><table><thead><tr><th>列</th></tr></thead><tbody>...</tbody></table></div>
+   ========================================================== */
+.table-wrap { overflow-x: auto; margin: 12px 0 8px; }
+table { border-collapse: collapse; width: 100%; background: var(--panel); font-size: 0.92rem; line-height: 1.6; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #eef1f5; white-space: nowrap; }
+
+/* ==========================================================
+   .mermaid  Mermaid 図のコンテナ
+   使う場面: 分岐のある処理 (flowchart)、テーブル関係 (erDiagram)、往復 (sequenceDiagram)。
+   中に Mermaid 記法をそのまま書く。ノードのラベルに <br/> や <b> を書かない (strict のため解釈されない)。
+   記法中の < は &lt; と書く。描画は下の script が id を一意に振って行う。
+   マークアップ: <div class="mermaid">flowchart LR
+     A[開始] --> B[終了]</div>
+   ========================================================== */
+.mermaid { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px; margin: 12px 0 8px; overflow-x: auto; text-align: center; white-space: pre; }
+.mermaid svg { max-width: 100%; height: auto; }
+.mermaid[data-rendered="true"] { white-space: normal; }
+.mermaid .mmd-error { color: #b91c1c; background: #fee2e2; border-radius: 6px; padding: 8px 12px;
+  text-align: left; white-space: pre-wrap; font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem; }
+
+@media (max-width: 600px) {
+  body { font-size: 15px; }
+  h1 { font-size: 1.4rem; }
+  .flow .step { flex-basis: 100%; }
+  .flow .step + .step::before { content: "\2193"; left: 50%; top: -26px; transform: translateX(-50%); }
+  .flow { row-gap: 36px; }
+  .layers .layer:nth-child(n) { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>{{TITLE}}</h1>
+{{BODY}}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+/* Mermaid の描画と、検証用の状態出力。
+   図ごとに一意の id ('mmd-' + 連番) を明示して順番に描画する。
+   自動採番は連続描画で衝突し、後の図が前の図を上書きするため使わない。 */
+(async function () {
+  var body = document.body;
+  var nodes = Array.prototype.slice.call(document.querySelectorAll('.mermaid'));
+  // 描画前の記法を保持する (件数確認・切り分け用)
+  nodes.forEach(function (el) { el.dataset.src = el.textContent.trim(); });
+
+  var ready = typeof window.mermaid !== 'undefined';
+  var rendered = 0;
+  var errors = 0;
+
+  if (ready) {
+    window.mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'default' });
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      try {
+        var out = await window.mermaid.render('mmd-' + i, el.dataset.src);
+        el.innerHTML = out.svg;
+        el.dataset.rendered = 'true';
+        if (el.querySelector('svg')) { rendered++; }
+      } catch (e) {
+        errors++;
+        el.dataset.rendered = 'error';
+        var msg = document.createElement('div');
+        msg.className = 'mmd-error';
+        msg.textContent = 'Mermaid 描画エラー (図 ' + (i + 1) + '): ' + (e && e.message ? e.message : e);
+        el.textContent = '';
+        el.appendChild(msg);
+        // 失敗時に Mermaid が body 直下へ残す一時要素を片付ける
+        var leftover = document.getElementById('dmmd-' + i);
+        if (leftover) { leftover.remove(); }
+      }
+    }
+  } else {
+    nodes.forEach(function (el) {
+      var msg = document.createElement('div');
+      msg.className = 'mmd-error';
+      msg.textContent = 'Mermaid ライブラリを読み込めませんでした (CDN に到達できない可能性があります)。';
+      el.insertBefore(msg, el.firstChild);
+    });
+  }
+
+  // === 高さ出力 script: verify_page.py が読むので消さないこと ===
+  body.setAttribute('data-mermaid-ready', ready ? 'true' : 'false');
+  body.setAttribute('data-mermaid-sources', String(nodes.length));
+  body.setAttribute('data-mermaid-rendered', String(rendered));
+  body.setAttribute('data-mermaid-errors', String(errors));
+  body.setAttribute('data-page-height', String(document.documentElement.scrollHeight));
+})();
+</script>
+</body>
+</html>
