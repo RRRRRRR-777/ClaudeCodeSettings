@@ -1,0 +1,56 @@
+{
+  "skill_name": "repay-understanding",
+  "evals": [
+    {
+      "id": 1,
+      "name": "cursor-pagination-concept",
+      "prompt": "記事一覧の無限スクロールで、次の20件を取るときに cursor っていうのを使ってるらしいけど、どういう仕組みなのか理解したい",
+      "simulated_user_reply": "最後に表示した記事のIDをサーバーに送って、その次から20件取ってるのかな？",
+      "expected_output": "会話での説明。ユーザーの予想と事実のずれから始まり、BE と FE の該当コードを path:line で示し、項目に識別子が付く。リポジトリにファイルを作らない。",
+      "files": [],
+      "assertions": [
+        "説明の前に、ユーザーが先に考える問いを1つ出している",
+        "問いの選択肢に答えの候補を並べていない",
+        "ユーザーの予想のどこが合っていてどこが違うかから説明を始めている",
+        "根拠のコード位置を path:line の形で示している",
+        "説明の項目に識別子が付いている",
+        "識別子を指定して深掘りできることを案内している",
+        "リポジトリにファイルを作っていない",
+        "圧縮した文体ではなく通常の文で書いている"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "cancellation-design-doc",
+      "prompt": "docs/functions/subscription/cancellation.md の設計がよくわからないので理解したい",
+      "simulated_user_reply": "わからない",
+      "expected_output": "explain-visually の図解ページを /tmp/explain-visually/ に作り、verify_page.py で ok を確認する。会話には要点と D-/U-/Q- の識別子による深掘りの案内を書く。リポジトリにファイルを作らない。",
+      "files": [],
+      "assertions": [
+        "説明の前に、ユーザーが先に考える問いを1つ出している",
+        "「わからない」の後に追加の質問をせず説明へ進んでいる",
+        "図解ページの HTML を /tmp/ の下に作り outputs にコピーしている",
+        "図解ページが verify_page.py で ok: true になる",
+        "図解ページに D-/U-/Q- の識別子がある",
+        "識別子を指定して深掘りできることを案内している",
+        "リポジトリにファイルを作っていない"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "rephrase-ingress-explanation",
+      "prompt": "【直前の会話】\nassistant: prod の Cloud Run は ingress を INTERNAL_LOAD_BALANCER に締めているので、run.app の URL へ直接アクセスしても届かず、外部 HTTPS LB の serverless NEG 経由でだけ到達する。dev はサブドメイン委譲、prod は apex 全委譲で Cloud DNS が LB の IP を返す。\n\n【今回のユーザー発言】\nごめん、さっきの説明ぜんぜん頭に入ってこない",
+      "simulated_user_reply": null,
+      "expected_output": "先に考える問いを出さずに言い直す。冒頭で文脈を置き直し、短い文で、専門用語を初出で定義し、項目に識別子が付く。",
+      "files": [],
+      "assertions": [
+        "先に考える問いを出していない",
+        "冒頭の1〜2文で文脈を置き直している",
+        "ingress・ロードバランサ・NEG などの専門用語を初出で定義している",
+        "説明の項目に識別子が付いている",
+        "事実の根拠をリポジトリ内のファイルで示すか、未確認と明示している",
+        "圧縮した文体ではなく通常の文で書いている"
+      ]
+    }
+  ]
+}
