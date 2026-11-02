@@ -119,7 +119,7 @@ URL: <PR や資料の URL>
 
 AI に任せる範囲を、閣下が推奨どおりに答えた実績で広げるため、確認の実績を週1回まとめる。
 
-- 秘書が開かれたとき、`~/.claude/approval-stats/last_run` の日付から7日以上たっているか、ファイルが無ければ集計する
+- 閣下が「一覧」と言ったときと、カードを受け取ったときに、`~/.claude/approval-stats/last_run` を見る。日付から7日以上たっているか、ファイルが無ければ集計する。秘書は常設で開き直さないため、開いたときだけを契機にすると週1回が動かない
 - 集計と分類はサブエージェントに任せ、秘書は報告の要点と候補だけを受け取る。秘書の文脈を判断カードの範囲に保つため
   - サブエージェントへの依頼は「`/Users/bokuyamada/RRRRRRR777/Repositories/SicouLab/.claude/tools/approval_stats/README.md` の『週1回の手順』に従い、報告の要点と候補を返す」とする。手元の作業ツリーは古いことがあるため、`git -C /Users/bokuyamada/RRRRRRR777/Repositories/SicouLab fetch origin` の後、README と `extract.py`・`summarize.py` は `git -C <同じリポジトリ> show origin/main:.claude/tools/approval_stats/<ファイル名>` で取り出し、スクリプトは一時フォルダに書き出して動かす
 - 報告の要点は、種類「報告」のカードとして一覧に入れる。候補は1件ずつ、種類「選択」のカードにする。選択肢は「AI に任せる」と「今のまま確認する」、それぞれ選んだときに起きることを書く
