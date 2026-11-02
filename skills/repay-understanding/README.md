@@ -85,6 +85,7 @@
 | 直前の説明が伝わらなかった | 言い直し |
 | 1つの概念・関数・設定・用語 | 会話での説明 |
 | PR・Issue・長い設計文書・複数の部品にまたがる流れ | `explain-visually` の図解ページ |
+| 使っている技術の構成を、公式ロゴ付きの全体像で。流れの正確さは問わない | `stack-diagram` |
 | アーキテクチャ・データモデル・呼び出しの流れを図1枚で | `d2-diagram` |
 | 他の読み手に渡す説明、実行例で確かめる理解 | `explainer` の速習資料 |
 | 20分を超える体系的な学習 | `explainer-book` の学習資料 |
@@ -98,6 +99,7 @@
 | `explain-visually` | このリポジトリ |
 | `d2-diagram`・`explainer`・`explainer-book`・`d2-slides` | explainer プラグイン |
 | `grilling` | mattpocock-skills プラグイン |
+| `stack-diagram` | 外部スキル。このリポジトリでは管理しない |
 
 `grill-with-docs`・`grill-me`・`teach`・`wait-what` は、プラグイン側で Claude から呼べない設定になっている。そのため、同じ働きを次のもので賄う。
 
@@ -106,6 +108,26 @@
 | `grill-with-docs`・`grill-me` | `grilling` を直接呼ぶ。用語集や ADR は書かない |
 | `teach` | `explainer-book` |
 | `wait-what` | この skill に組み込んだ言い直しの手順 |
+
+## 導入手順
+
+この skill は、他の skill を呼んで動く。このリポジトリに入っているのは `repay-understanding` と `explain-visually` だけなので、残りは次の表の方法で導入する。
+
+| 導入するもの | 提供元 | 導入方法 |
+|---|---|---|
+| `d2-diagram`・`explainer`・`explainer-book`・`d2-slides` | [mizchi/explainer](https://github.com/mizchi/explainer) | 手順は提供元の README に従う |
+| `grilling` | [mattpocock/skills](https://github.com/mattpocock/skills) | 手順は提供元の README に従う |
+| `stack-diagram` | [caru-ini/stack-diagram](https://github.com/caru-ini/stack-diagram) | 下のコマンド。手順の詳細は提供元の README |
+
+`stack-diagram` は、全プロジェクトで使えるように `~/.claude/skills/` へ導入する。
+
+```bash
+npx skills add caru-ini/stack-diagram -g -a claude-code -y
+```
+
+- 必要なもの: Python 3.9 以上と、ロゴを取得するためのネットワーク。PNG で出すときは Playwright と Chromium も要る
+- `~/.claude/skills/stack-diagram/` は、リポジトリの管理に含めない。更新は同じコマンドをもう一度実行する
+- 公開ギャラリーへの投稿は、`repay-understanding` からは提案しない
 
 ## ファイル構成
 
